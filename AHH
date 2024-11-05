@@ -1,0 +1,59 @@
+local player = game.Players.LocalPlayer
+
+-- Function to create the Screen GUI and button
+local function createGui()
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- Create the Screen GUI if it doesn't exist
+    local screenGui = playerGui:FindFirstChild("LayDownGui") or Instance.new("ScreenGui")
+    screenGui.Name = "LayDownGui"
+    screenGui.Parent = playerGui
+
+    -- Lay Down Button
+    local layDownButton = screenGui:FindFirstChild("LayDownButton") or Instance.new("TextButton")
+    layDownButton.Size = UDim2.new(0, 100, 0, 50)
+    layDownButton.Position = UDim2.new(0, 10, 1, -280) -- Centered at the top
+    layDownButton.Text = "Lay Down"
+    layDownButton.Font = Enum.Font.SourceSans
+    layDownButton.TextSize = 24
+    layDownButton.BackgroundColor3 = Color3.new(0, 1, 0) -- Green color
+    layDownButton.TextColor3 = Color3.new(1, 1, 1) -- White text
+    layDownButton.Name = "LayDownButton" -- Give it a name for identification
+    layDownButton.Parent = screenGui
+
+    -- Function to make the character lay down and play animation
+    local function layDown()
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        local animator = humanoid:FindFirstChildOfClass("Animator")
+
+        if humanoid and hrp and animator then
+            humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            humanoid.PlatformStand = true -- Prevent movement
+            hrp.CFrame = hrp.CFrame * CFrame.new(0, -1, 0) * CFrame.Angles(math.rad(90), 0, 0) -- Adjust to lay down
+
+            -- Load and play the animation
+            local animation = Instance.new("Animation")
+            animation.AnimationId = "rbxassetid://10121528997"
+            local animationTrack = animator:LoadAnimation(animation)
+
+            animationTrack:Play() -- Play the animation
+            animationTrack.TimePosition = 0.45 -- Start from 2 seconds
+            animationTrack:AdjustSpeed(0) -- Pause the animation
+
+            humanoid.PlatformStand = false -- Allow jumping again
+        end
+    end
+
+    -- Button click event
+    layDownButton.MouseButton1Click:Connect(layDown)
+end
+
+-- Create the GUI when the player joins
+createGui()
+
+-- Recreate the GUI when the character is added (on reset)
+player.CharacterAdded:Connect(function()
+    createGui() -- Recreate the GUI immediately when the character resets
+end)
