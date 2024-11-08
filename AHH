@@ -35,7 +35,7 @@ local function createGui()
 
             -- Load and play the animation
             local animation = Instance.new("Animation")
-            animation.AnimationId = "rbxassetid://10121528997"
+            animation.AnimationId = "rbxassetid://90841854866960"
             local animationTrack = animator:LoadAnimation(animation)
 
             animationTrack:Play() -- Play the animation
